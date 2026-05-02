@@ -4,24 +4,16 @@ import random
 import copy
 
 # ==============================================================
-# LIBRERÍAS USADAS
-# tkinter  → interfaz gráfica  → https://docs.python.org/3/library/tkinter.html
-# random   → decisiones IA     → https://docs.python.org/3/library/random.html
-# copy     → copiar personajes → https://docs.python.org/3/library/copy.html
-# Las 3 vienen incluidas con Python, no hay que instalar nada.
-# ==============================================================
-
-# ==============================================================
 # SECCIÓN 0 — DATOS: 15 PERSONAJES Y CONSTANTES
 # ==============================================================
 
 PERSONAJES = [
     {"nombre": "HERCULES",  "hp_max": 100, "hp": 100, "atk": 25, "def": 10, "img": "imagenes/hercules.png"},
-    {"nombre": "SULLEY",    "hp_max": 140, "hp": 140, "atk": 12, "def": 20, "img": "imagenes/Sulley.png"},
+    {"nombre": "SULLEY",    "hp_max": 140, "hp": 140, "atk": 12, "def": 20, "img": "imagenes/sulley.png"},
     {"nombre": "MULAN",     "hp_max": 110, "hp": 110, "atk": 18, "def": 15, "img": "imagenes/mulan.png"},
     {"nombre": "BUZZ",      "hp_max": 95,  "hp": 95,  "atk": 22, "def": 12, "img": "imagenes/buzz.png"},
     {"nombre": "BAYMAX",    "hp_max": 160, "hp": 160, "atk": 8,  "def": 25, "img": "imagenes/baymax.png"},
-    {"nombre": "SIMBA",     "hp_max": 120, "hp": 120, "atk": 20, "def": 14, "img": "imagenes/Simba.png"},
+    {"nombre": "SIMBA",     "hp_max": 120, "hp": 120, "atk": 20, "def": 14, "img": "imagenes/simba.png"},
     {"nombre": "MOANA",     "hp_max": 105, "hp": 105, "atk": 19, "def": 16, "img": "imagenes/moana.png"},
     {"nombre": "STITCH",    "hp_max": 130, "hp": 130, "atk": 17, "def": 18, "img": "imagenes/stitch.png"},
     {"nombre": "ELSA",      "hp_max": 90,  "hp": 90,  "atk": 28, "def": 8,  "img": "imagenes/elsa.png"},
@@ -30,7 +22,7 @@ PERSONAJES = [
     {"nombre": "RAPUNZEL",  "hp_max": 100, "hp": 100, "atk": 21, "def": 13, "img": "imagenes/rapunzel.png"},
     {"nombre": "MAUI",      "hp_max": 150, "hp": 150, "atk": 14, "def": 22, "img": "imagenes/maui.png"},
     {"nombre": "MIRABEL",   "hp_max": 108, "hp": 108, "atk": 17, "def": 16, "img": "imagenes/mirabel.png"},
-    {"nombre": "RAYA",      "hp_max": 95,  "hp": 95,  "atk": 24, "def": 11, "img": "imagenes/Raya.png"},
+    {"nombre": "RAYA",      "hp_max": 95,  "hp": 95,  "atk": 24, "def": 11, "img": "imagenes/raya.png"},
 ]
 
 UBICACIONES  = ["Radiator Springs", "Pride Rock", "Monstropolis", "Arendelle", "Corona"]
@@ -78,7 +70,7 @@ lbl_stats_jugador          = None
 lbl_stats_hollow           = None
 btn_atacar                 = None
 
-# Referencias para imágenes en batalla (evita que el recolector de basura las borre)
+# Referencias para imágenes en batalla
 lbl_img_jugador            = None
 lbl_img_hollow             = None
 img_jugador_tk             = None
@@ -89,7 +81,7 @@ img_hollow_tk              = None
 # ==============================================================
 
 def copiar_personaje(p):
-    """Devuelve una copia independiente del diccionario del personaje."""
+    """Devuelve una copia del personaje para no afectar al diccionario."""
     return copy.copy(p)
 
 
@@ -116,8 +108,7 @@ def calcular_daño(atacante, defensor):
 
 def todos_ko(equipo, indice):
     """
-    RECURSIÓN: recorre el equipo y retorna True si todos están en KO.
-    Caso base: llegamos al final del equipo → todos estaban en KO.
+    revisa si todos los personajes esten ko
     """
     if indice >= len(equipo):
         return True
@@ -128,8 +119,7 @@ def todos_ko(equipo, indice):
 
 def buscar_vivo(equipo, indice):
     """
-    RECURSIÓN: retorna el primer personaje vivo del equipo.
-    Caso base: fin del equipo → no hay ninguno vivo (retorna None).
+    se fija en el proximo personaje despues del que murio
     """
     if indice >= len(equipo):
         return None
@@ -140,8 +130,7 @@ def buscar_vivo(equipo, indice):
 
 def restaurar_equipo(equipo, indice):
     """
-    RECURSIÓN: restaura la vida de cada personaje del equipo.
-    Caso base: llegamos al final del equipo.
+    restaura la vida de los personajes 
     """
     if indice >= len(equipo):
         return
@@ -162,8 +151,7 @@ def construir_equipo(indices, pos):
 
 def copiar_lista(lista, indice):
     """
-    RECURSIÓN: devuelve una lista con copias de cada personaje.
-    Caso base: índice >= largo de la lista.
+    devuelve una copia del equipo que se eligio para no afectar el diccionario
     """
     if indice >= len(lista):
         return []
@@ -172,8 +160,7 @@ def copiar_lista(lista, indice):
 
 def jugador_ya_tiene(nombre_personaje, indice):
     """
-    RECURSIÓN: verifica si el jugador ya tiene un personaje con ese nombre.
-    Caso base: llegó al final del equipo → no lo tiene.
+    se fija que el personaje que derrotamos no es uno que ya tenemos para no tenerlo repetido
     """
     if indice >= len(equipo_jugador):
         return False
@@ -184,9 +171,7 @@ def jugador_ya_tiene(nombre_personaje, indice):
 
 def transferir_personaje(personaje, equipo_origen, equipo_destino):
     """
-    Mueve un personaje de un equipo al otro y le restaura la vida.
-    Si el destino es el equipo del jugador y ya tiene ese personaje,
-    simplemente lo elimina del hollow sin duplicarlo.
+   mueve un personaje de un equipo al otro
     """
     equipo_origen.remove(personaje)
     if equipo_destino is equipo_jugador and jugador_ya_tiene(personaje["nombre"], 0):
@@ -223,13 +208,10 @@ def validar_nombre(texto):
 
 def validar_seleccion_personajes(nombres):
     """
-    Valida que los 3 slots tengan un personaje seleccionado
-    y que no se haya elegido el mismo dos veces.
-    Recibe una lista de 3 strings con los nombres elegidos.
-    Retorna True si es válido, False si no lo es.
+    esta funcion valida que se hayan elegido 3 personajes diferentes
     """
-    placeholder = "— elige un personaje —"
-    if nombres[0] == placeholder or nombres[1] == placeholder or nombres[2] == placeholder:
+    eleccion = "— elige un personaje —"
+    if nombres[0] == eleccion or nombres[1] == eleccion or nombres[2] == eleccion:
         mostrar_error("Debes elegir un personaje en cada ranura.")
         return False
     if len(set(nombres)) != 3:
@@ -240,9 +222,7 @@ def validar_seleccion_personajes(nombres):
 
 def validar_cambio_personaje(personaje):
     """
-    Valida que el personaje elegido para cambiar esté vivo
-    y no sea el mismo que ya está en batalla.
-    Retorna True si es válido, False si no lo es.
+    valida que el personaje que se elige en batalla este vivo y no sea el mismo que esta luchando
     """
     if not esta_vivo(personaje):
         mostrar_error("Ese personaje está en KO, elige otro.")
@@ -264,23 +244,17 @@ def armar_equipo_hollow():
 
 def hollow_decide():
     """
-    El Hollow toma una decisión completamente aleatoria.
-    Tiene más probabilidad de atacar que de cambiar (req 02-b).
+    decisiones del hollow
     """
     return random.choice(["atacar", "atacar", "atacar", "cambiar"])
 
 
 def ejecutar_turno(atacante, defensor, es_turno_jugador):
     """
-    RECURSIÓN PRINCIPAL del juego (req obligatorio de recursividad).
-
-    Caso base: alguno de los dos personajes no tiene vida → terminar.
-    Caso recursivo: aplica el daño, actualiza la pantalla y se llama
-    a sí misma con los roles invertidos después de 1.2 segundos.
+    esta funcion decide quien ataca y cuanto daño hace uno al otro
     """
     global turno_en_progreso
 
-    # ── CASO BASE ──────────────────────────────────────────────
     if not esta_vivo(atacante) or not esta_vivo(defensor):
         _manejar_ko(es_turno_jugador)
         return
@@ -293,38 +267,34 @@ def ejecutar_turno(atacante, defensor, es_turno_jugador):
 
     actualizar_pantalla_batalla()
 
-    # ── CASO RECURSIVO ─────────────────────────────────────────
-    # Esperamos 1.2 s y luego pasamos al siguiente paso del turno
     ventana.after(1200, lambda: _continuar_turno(es_turno_jugador))
-
 
 def _continuar_turno(fue_turno_jugador):
     """
-    Llamada desde ejecutar_turno via after().
-    Si el defensor quedó en KO lo maneja; si no, da el turno al otro.
+    nos fijamos si al atacar uno termina ko y si no sigue
     """
     global turno_en_progreso
 
     if fue_turno_jugador:
-        # El jugador atacó → revisamos si el hollow quedó en KO
+        # si el jugador atacó revisamos si el hollow quedó en KO
         if not esta_vivo(personaje_activo_hollow):
             _manejar_ko(True)
             return
-        # El hollow sigue vivo → ahora ataca el hollow
+        # si el hollow sigue vivo, ahora ataca el hollow
         _turno_hollow()
     else:
-        # El hollow atacó → revisamos si el jugador quedó en KO
+        # si el hollow atacó revisamos si el jugador quedó en KO
         if not esta_vivo(personaje_activo_jugador):
             _manejar_ko(False)
             return
-        # El jugador sigue vivo → devolvemos el turno al jugador
+        # si el jugador sigue vivo devolvemos el turno al jugador
         turno_en_progreso = False
         if btn_atacar:
             btn_atacar.config(state="normal")
 
 
 def _turno_hollow():
-    """Decide la acción del Hollow y la ejecuta con un pequeño delay."""
+    """Decide la acción del Hollow y la ejecuta"""
     global personaje_activo_hollow
 
     accion = hollow_decide()
@@ -335,7 +305,6 @@ def _turno_hollow():
             personaje_activo_hollow = nuevo
             actualizar_pantalla_batalla()
 
-    # Llamada recursiva: ahora el hollow ataca al jugador
     ventana.after(800, lambda: ejecutar_turno(
         personaje_activo_hollow,
         personaje_activo_jugador,
@@ -345,8 +314,8 @@ def _turno_hollow():
 
 def _manejar_ko(gano_el_jugador):
     """
-    Gestiona el KO de un personaje: transfiere al ganador,
-    actualiza puntaje y decide si la batalla terminó.
+    esta funcion administra el ko de un personaje, transfiere al ganador el personaje derrotado, 
+    actualiza el puntaje y decide si la batalla terminó.
     """
     global personaje_activo_jugador, personaje_activo_hollow
     global puntaje_jugador, puntaje_hollow, turno_en_progreso
@@ -374,28 +343,24 @@ def _manejar_ko(gano_el_jugador):
         btn_atacar.config(state="normal")
 
 # ==============================================================
-# SECCIÓN 4 — PANTALLAS TKINTER
+# SECCIÓN 4 — PANTALLA TKINTER
 # ==============================================================
-
-# ── Utilidad: limpiar ventana ──────────────────────────────────
 
 def limpiar_ventana():
     """
-    RECURSIÓN: destruye todos los widgets de la ventana principal
-    para poder dibujar la siguiente pantalla desde cero.
-    Siempre destruye el primer hijo hasta que no quede ninguno.
+    elimina la ventana que esta abierta para crear una nueva
     """
-    hijos = ventana.winfo_children()
-    if len(hijos) == 0:
+    anterior = ventana.winfo_children()
+    if len(anterior) == 0:
         return
-    hijos[0].destroy()
+    anterior[0].destroy()
     limpiar_ventana()   # ← llamada recursiva
 
 
 # ── PANTALLA DE INICIO ─────────────────────────────────────────
 
 def mostrar_inicio():
-    """Dibuja la pantalla inicial: nombre y selección de personajes."""
+    # crea la pantalla inicial: nombre y selección de personajes.
     limpiar_ventana()
 
     ventana.title("Imaginary Battle — Inicio")
@@ -482,9 +447,7 @@ def mostrar_inicio():
 
 def construir_opciones_menu(indice):
     """
-    RECURSIÓN: construye la lista de strings que se muestran en los OptionMenu.
-    Cada opción tiene nombre, HP, ATK y DEF del personaje.
-    Caso base: índice >= cantidad de personajes.
+    muestra las caracteristicas de los personajes en el juego
     """
     if indice >= len(PERSONAJES):
         return []
@@ -516,20 +479,18 @@ def al_presionar_iniciar(entrada_nombre, vars_slots):
 
 def buscar_indices_por_nombres(nombres, indice, resultado):
     """
-    RECURSIÓN: convierte la lista de nombres elegidos en sus índices
-    dentro de PERSONAJES. Caso base: todos los nombres fueron encontrados.
+    convierte el nombre del personaje en el indice que tiene en la lista personajes
     """
     if indice >= len(nombres):
         return resultado
-    nombre_buscado = nombres[indice].split()[0]   # primer palabra = nombre del personaje
-    idx = encontrar_indice_personaje(nombre_buscado, 0)
-    return buscar_indices_por_nombres(nombres, indice + 1, resultado + [idx])
+    nombre_buscado = nombres[indice].split()[0]   
+    id = encontrar_indice_personaje(nombre_buscado, 0)
+    return buscar_indices_por_nombres(nombres, indice + 1, resultado + [id])
 
 
 def encontrar_indice_personaje(nombre_buscado, indice):
     """
-    RECURSIÓN: busca el índice de un personaje por nombre dentro de PERSONAJES.
-    Caso base: lo encontró → retorna el índice.
+    busca el indice de un personaje en la lista personajes y lo devuelve para saber cual personaje es
     """
     if indice >= len(PERSONAJES):
         return 0
@@ -539,15 +500,16 @@ def encontrar_indice_personaje(nombre_buscado, indice):
 
 
 def mostrar_about():
-    """Muestra la información del proyecto en una ventana emergente."""
+    """Muestra la información del proyecto en una ventana nueva."""
     messagebox.showinfo("About — Imaginary Battle",
         "Imaginary Battle\n\n"
         "Proyecto 1 — Introducción a la Programación\n"
         "Tecnológico de Costa Rica · I Semestre 2026\n\n"
         "Profesor: Santiago Ramírez\n"
-        "Profesor: Ellioth Ramírez\n\n"
+        "Creador: Jefferson Cerdas Porras\n\n"
+        "Carnet: 2025075834\n\n"
         "Desarrollado con Python 3 y Tkinter.\n"
-        "Derrota a los 5 Hollows para restaurar las historias."
+        "Derrota a los 5 Hollows para ganar."
     )
 
 
@@ -571,7 +533,7 @@ def mostrar_mapa():
                        highlightthickness=0)
     canvas.pack(padx=30)
 
-    # Posiciones (x, y) de cada nodo en el canvas
+    # Posiciones de cada nodo en el canvas
     nodos_x = [80, 190, 310, 430, 540]
     nodos_y = [170, 90,  200, 100, 170]
 
@@ -594,9 +556,7 @@ def dibujar_caminos(canvas, xs, ys, indice):
 
 def dibujar_nodos(canvas, xs, ys, indice):
     """
-    RECURSIÓN: dibuja cada nodo del mapa con su nombre y estado.
-    Nodos derrotados: verde con check. Nodo actual: rojo clickeable.
-    Caso base: índice >= cantidad de ubicaciones.
+    dibuja los nodos de los mapas y los cambia de color segun se logre derrotar a los hollow o no
     """
     if indice >= len(UBICACIONES):
         return
@@ -667,13 +627,13 @@ def al_entrar_ubicacion(indice):
     global puntaje_jugador, puntaje_hollow
 
     # Restaurar equipo del jugador al inicio de cada batalla
-    restaurar_equipo(equipo_jugador, 0)   # ← recursiva
+    restaurar_equipo(equipo_jugador, 0) 
 
-    equipo_hollow              = armar_equipo_hollow()
-    personaje_activo_jugador   = equipo_jugador[0]
-    personaje_activo_hollow    = equipo_hollow[0]
-    puntaje_jugador            = 0
-    puntaje_hollow             = 0
+    equipo_hollow = armar_equipo_hollow()
+    personaje_activo_jugador = equipo_jugador[0]
+    personaje_activo_hollow = equipo_hollow[0]
+    puntaje_jugador = 0
+    puntaje_hollow = 0
 
     mostrar_batalla()
 
@@ -693,17 +653,17 @@ def mostrar_batalla():
     ventana.geometry("680x580")
     ventana.configure(bg="#1a1a2e")
 
-    # ── Puntaje ───────────────────────────────────────────────
+    # Puntaje 
     lbl_puntaje = tk.Label(ventana,
         text=f"Puntaje  —  Tu: {puntaje_jugador}   |   Hollow: {puntaje_hollow}",
         font=("Arial", 12), bg="#1a1a2e", fg="#e94560")
     lbl_puntaje.pack(pady=(15, 6))
 
-    # ── Arena de batalla ──────────────────────────────────────
+    # Arena de batalla 
     arena = tk.Frame(ventana, bg="#16213e", bd=2, relief="groove")
     arena.pack(padx=30, fill="x")
 
-    # Personaje del jugador (izquierda)
+    # Personaje del jugador
     frame_j = tk.Frame(arena, bg="#16213e")
     frame_j.pack(side="left", expand=True, padx=20, pady=12)
     tk.Label(frame_j, text=nombre_jugador,
@@ -731,7 +691,7 @@ def mostrar_batalla():
     tk.Label(arena, text="VS", font=("Arial", 22, "bold"),
              bg="#16213e", fg="#e94560").pack(side="left", padx=15)
 
-    # Personaje del Hollow (derecha)
+    # Personaje del Hollow 
     frame_h = tk.Frame(arena, bg="#16213e")
     frame_h.pack(side="right", expand=True, padx=20, pady=12)
     tk.Label(frame_h, text="HOLLOW",
@@ -780,8 +740,7 @@ def mostrar_batalla():
 
 def mostrar_equipo_en_batalla(frame, equipo, indice):
     """
-    RECURSIÓN: muestra el nombre y estado de cada personaje del equipo.
-    Caso base: índice >= largo del equipo.
+    muestra el nombre del equipo y muestra si esta ko o ok
     """
     if indice >= len(equipo):
         return
@@ -820,8 +779,7 @@ def actualizar_pantalla_batalla():
     if lbl_stats_hollow:
         lbl_stats_hollow.config(
             text=f"ATK {personaje_activo_hollow['atk']}  DEF {personaje_activo_hollow['def']}")
-    # Actualizar imagen del jugador — se guarda en global para evitar que el
-    # recolector de basura de Python la borre de memoria
+    # Actualizar imagen del jugador, se guarda en global para evitar que el recolector de basura de Python la borre de memoria
     if lbl_img_jugador:
         img_jugador_tk = cargar_imagen(personaje_activo_jugador["img"])
         if img_jugador_tk:
@@ -844,18 +802,17 @@ def al_presionar_atacar():
         return
     turno_en_progreso = True
     btn_atacar.config(state="disabled")
-    # La recursión arranca aquí ↓
     ejecutar_turno(personaje_activo_jugador, personaje_activo_hollow, True)
 
 
 def al_presionar_cambiar():
-    # Abre ventana emergente para cambiar personaje
+    # Abre la ventana para cambiar personaje
     # Si el turno está en progreso no se puede cambiar
     if turno_en_progreso:
         mostrar_error("Espera a que termine el turno antes de cambiar.")
         return
 
-    # Crear ventana secundaria flotante
+    # Crear ventana secundaria del cambio de personaje
     ventana_cambio = tk.Toplevel(ventana)
     ventana_cambio.title("Cambiar personaje")
     ventana_cambio.configure(bg="#1a1a2e")
@@ -864,7 +821,7 @@ def al_presionar_cambiar():
     tk.Label(ventana_cambio, text="Elige un personaje:",
              font=("Arial", 12, "bold"), bg="#1a1a2e", fg="white").pack(pady=12)
 
-    # Canvas + Scrollbar para que si hay muchos personajes se pueda hacer scroll
+    # Scrollbar por si hay muchos personajes que se pueda hacer scroll
     canvas_scroll = tk.Canvas(ventana_cambio, bg="#1a1a2e", highlightthickness=0, width=300)
     scrollbar     = tk.Scrollbar(ventana_cambio, orient="vertical",
                                  command=canvas_scroll.yview)
@@ -877,19 +834,18 @@ def al_presionar_cambiar():
     frame_opciones = tk.Frame(canvas_scroll, bg="#1a1a2e")
     ventana_id = canvas_scroll.create_window((0, 0), window=frame_opciones, anchor="nw")
 
-    # Mostrar todos los personajes vivos (recursiva)
+    # Mostrar todos los personajes vivos
     mostrar_opciones_cambio(frame_opciones, equipo_jugador, 0, ventana_cambio)
 
     # Ajustar el área de scroll y el alto de la ventana según cuántos botones haya
     frame_opciones.update_idletasks()
     alto_contenido = frame_opciones.winfo_reqheight()
-    alto_ventana   = min(alto_contenido + 80, 420)   # máximo 420px de alto
+    alto_ventana   = min(alto_contenido + 80, 420)  
     canvas_scroll.configure(height=alto_contenido)
     ventana_cambio.geometry(f"320x{alto_ventana}")
 
 
 def mostrar_opciones_cambio(frame, equipo, indice, ventana_cambio):
-    # CASO BASE: ya revisamos todos los personajes del equipo
     if indice >= len(equipo):
         return
 
@@ -903,8 +859,6 @@ def mostrar_opciones_cambio(frame, equipo, indice, ventana_cambio):
                   padx=10, pady=6, bd=0, cursor="hand2",
                   command=lambda per=p: confirmar_cambio(per, ventana_cambio)
                   ).pack(pady=4, padx=20, fill="x")
-
-    # LLAMADA RECURSIVA: revisar el siguiente personaje del equipo
     mostrar_opciones_cambio(frame, equipo, indice + 1, ventana_cambio)
 
 
@@ -936,10 +890,10 @@ def terminar_batalla(gano_jugador):
         mostrar_fin_juego(False)
 
 
-# ── PANTALLA DE FIN ────────────────────────────────────────────
+# PANTALLA DE FIN 
 
 def mostrar_fin_juego(gano):
-    """Muestra la pantalla final de victoria o derrota."""
+    # Muestra la pantalla final de victoria o derrota.
     limpiar_ventana()
     ventana.title("Imaginary Battle — Fin")
     ventana.geometry("500x340")
